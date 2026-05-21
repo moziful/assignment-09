@@ -1,13 +1,49 @@
-import Link from "next/link";
+"use client";
 
-const SignInPage = () => {
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+
+export default function SignInPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    const { error } = await authClient.signIn.email({
+      email,
+      password,
+      callbackURL: callbackUrl,
+      rememberMe: true,
+    });
+
+    if (error) {
+      setErrorMessage(error?.message || "Sign in failed. Please try again.");
+      return;
+    }
+
+    router.push(callbackUrl);
+  };
+
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-20">
-      <form className="fieldset bg-blue-100 border-base-300 rounded-box w-xs border p-4">
+      <form
+        onSubmit={onSubmit}
+        className="fieldset bg-blue-100 border-base-300 rounded-box w-xs border p-4"
+      >
         <fieldset className="fieldset">
           <label className="label">Email</label>
           <input
             type="email"
+            name="email"
             className="input validator"
             placeholder="Email"
             required
@@ -15,25 +51,29 @@ const SignInPage = () => {
           <p className="validator-hint hidden">Required</p>
         </fieldset>
 
-        <label className="fieldset">
-          <span className="label">Password</span>
+        <fieldset className="fieldset">
+          <label className="label">Password</label>
           <input
             type="password"
+            name="password"
             className="input validator"
             placeholder="Password"
             required
           />
-          <span className="validator-hint hidden">Required</span>
-        </label>
+          <p className="validator-hint hidden">Required</p>
+        </fieldset>
 
-        <button
-          className="btn btn-neutral bg-blue-500 border-0 text-white mt-4"
-          type="submit"
-        >
+        {errorMessage ? (
+          <p className="mt-2 rounded-md border border-red-500 bg-red-400 px-3 py-2 text-center font-bold text-white">
+            {errorMessage}
+          </p>
+        ) : null}
+
+        <button className="btn btn-neutral mt-4 border-0 bg-black text-white" type="submit">
           Sign In
         </button>
-        <p>
-          Don&apos;t Have an Account?{" "}
+        <p className="mt-3">
+          Don&apos;t have an account?{" "}
           <Link href="/auth/signup" className="text-blue-500 hover:underline">
             Sign Up
           </Link>
@@ -41,6 +81,4 @@ const SignInPage = () => {
       </form>
     </div>
   );
-};
-
-export default SignInPage;
+}

@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdOutlinePets } from "react-icons/md";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -16,7 +18,13 @@ const navItems = [
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isLoggedIn = false;
+  const { data: session } = authClient.useSession();
+  const isLoggedIn = Boolean(session?.user);
+  const userName = session?.user?.name || "User";
+  const userImage = session?.user?.image;
+  const canUseUserImage =
+    typeof userImage === "string" &&
+    /^https?:\/\//i.test(userImage.trim());
 
   const linkClass = (href) =>
     `rounded-full border px-4 py-2 text-sm font-medium transition ${
@@ -24,6 +32,11 @@ export default function Navbar() {
         ? "border-blue-500 text-blue-700"
         : "border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900"
     }`;
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="navbar sticky top-0 z-50 border-b border-gray-200/80 bg-white/90 backdrop-blur">
@@ -54,9 +67,24 @@ export default function Navbar() {
             <div className="dropdown dropdown-end">
               <button
                 type="button"
-                className="btn border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50"
+                className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-gray-700 hover:border-blue-300 hover:bg-blue-50"
               >
-                Profile
+                {canUseUserImage ? (
+                  <Image
+                    src={userImage}
+                    alt={userName}
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-semibold text-white">
+                    {userName.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <span className="max-w-28 truncate text-sm font-medium">
+                  {userName}
+                </span>
               </button>
               <ul
                 tabIndex={0}
@@ -66,7 +94,9 @@ export default function Navbar() {
                   <Link href="/dashboard">Dashboard</Link>
                 </li>
                 <li>
-                  <Link href="/auth/signout">Sign Out</Link>
+                  <button type="button" onClick={handleSignOut}>
+                    Sign Out
+                  </button>
                 </li>
               </ul>
             </div>
@@ -108,21 +138,39 @@ export default function Navbar() {
             </div>
             <div className="mt-3 border-t border-gray-200 pt-3">
               {isLoggedIn ? (
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href="/dashboard"
-                    className="rounded-full px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/auth/signout"
-                    className="rounded-full px-4 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Sign Out
-                  </Link>
+                <div className="flex items-center gap-3 rounded-2xl px-3 py-2">
+                  {canUseUserImage ? (
+                    <Image
+                      src={userImage}
+                      alt={userName}
+                      width={36}
+                      height={36}
+                      className="h-9 w-9 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500 text-sm font-semibold text-white">
+                      {userName.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-gray-900">
+                      {userName}
+                    </p>
+                    <Link
+                      href="/dashboard"
+                      className="text-sm text-blue-600 hover:underline"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="mt-1 text-sm text-gray-600 hover:text-gray-900 hover:underline"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <Link
