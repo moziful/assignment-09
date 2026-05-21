@@ -19,7 +19,7 @@ export default function NotFound() {
 
         <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-gray-600">
           The page you are looking for does not exist or may have been moved.
-          Let's see which pet is here for you!
+          Let&apos;s see which pet is here for you!
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

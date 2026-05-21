@@ -33,7 +33,7 @@ const SignInPage = () => {
           Sign In
         </button>
         <p>
-          Don't Have an Account?{" "}
+          Don&apos;t Have an Account?{" "}
           <Link href="/auth/signup" className="text-blue-500 hover:underline">
             Sign Up
           </Link>
