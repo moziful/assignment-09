@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section className="mx-auto grid w-full max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+    <section className="mx-auto mt-10 grid w-full max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
       <div>
         <p className="mb-5 inline-flex w-fit items-center rounded-md bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
           Meet your next best friend
