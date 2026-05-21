@@ -4,6 +4,7 @@ import WhyAdoptPets from "@/components/WhyAdoptPets";
 import SuccessStories from "@/components/SuccessStories";
 import HowAdoptionWorks from "@/components/HowAdoptionWorks";
 import PetCareTips from "@/components/PetCareTips";
+import FAQSection from "@/components/FAQSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <SuccessStories />
       <HowAdoptionWorks />
       <PetCareTips />
+      <FAQSection />
     </div>
   );
 }
