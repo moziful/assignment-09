@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PetBuddy
+
+PetBuddy is a pet adoption platform built with Next.js, Better Auth, and MongoDB. It helps users browse pets, view details, send adoption requests, and manage pet listings through a dashboard experience.
+
+## Purpose
+
+The purpose of this project is to create a clean, recruiter-friendly pet adoption portal where users can explore available pets, submit adoption requests, and manage their own listings and requests.
+
+## Live URL
+
+`https://assignment-09-phi.vercel.app/`
+
+## Features
+
+- Responsive home page with hero section and multiple sections
+- Featured pets section with dynamic pet cards
+- All Pets page with search, species filter, sorting, and clear filters
+- Pet details page with adoption modal
+- Authentication with sign up, sign in, sign out, and protected dashboard routes
+- Dashboard layout with My Requests, Add Pet, and My Listings
+- Custom loading page and 404 page
+- User profile display in the navbar when signed in
+
+## NPM Packages Used
+
+- `next`
+- `react`
+- `react-dom`
+- `better-auth`
+- `mongodb`
+- `react-icons`
+- `daisyui`
+- `tailwindcss`
+- `eslint`
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file with these values:
 
-## Learn More
+```env
+BETTER_AUTH_SECRET=your_secret
+BETTER_AUTH_URL=http://localhost:3000
+MONGODB_URI=your_mongodb_connection_string
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- No default `alert()` is used for user messages.
+- The project is designed to be responsive on mobile, tablet, and desktop.
+- Dashboard routes are protected with a client-side session guard.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

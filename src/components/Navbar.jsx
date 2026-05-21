@@ -11,8 +11,8 @@ import { authClient } from "@/lib/auth-client";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/all-pets", label: "All Pets" },
-  { href: "/my-requests", label: "My Requests" },
-  { href: "/add-pet", label: "Add Pet" },
+  { href: "/dashboard/my-requests", label: "My Requests" },
+  { href: "/dashboard/add-pet", label: "Add Pet" },
 ];
 
 export default function Navbar() {
@@ -23,8 +23,7 @@ export default function Navbar() {
   const userName = session?.user?.name || "User";
   const userImage = session?.user?.image;
   const canUseUserImage =
-    typeof userImage === "string" &&
-    /^https?:\/\//i.test(userImage.trim());
+    typeof userImage === "string" && /^https?:\/\//i.test(userImage.trim());
 
   const linkClass = (href) =>
     `rounded-full border px-4 py-2 text-sm font-medium transition ${
