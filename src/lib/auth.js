@@ -24,6 +24,7 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL,
     process.env.SERVER_URL,
     process.env.CLIENT_URL,
+    process.env.NEXT_PUBLIC_API_BASE_URL,
     "http://localhost:3000",
   ].filter(Boolean),
   emailAndPassword: {

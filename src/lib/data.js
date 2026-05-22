@@ -1,5 +1,5 @@
 export const getAllPets = async () => {
-    const response = await fetch('http://localhost:5000/all-pets');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/all-pets`);
     const data = await response.json();
     return data;
 }

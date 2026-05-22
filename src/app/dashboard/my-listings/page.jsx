@@ -131,7 +131,7 @@ export default function MyListingsPage() {
     if (!petToDelete) return;
     try {
       const res = await fetch(
-        `http://localhost:5000/all-pets/${petToDelete._id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets/${petToDelete._id}`,
         {
           method: "DELETE",
         },
