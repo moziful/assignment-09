@@ -1,8 +1,26 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { pets } from "@/lib/pets-data";
+import { useEffect, useState } from "react";
 
 const AvailablePets = () => {
+  const [pets, setPets] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/featured-pets");
+        const data = await res.json();
+
+        setPets(data.slice(0, 6));
+      } catch (error) {
+        console.error("Failed to fetch pets:", error);
+      }
+    };
+
+    load();
+  }, []);
   return (
     <section
       id="featured-pets"
@@ -10,7 +28,7 @@ const AvailablePets = () => {
     >
       <div className="mb-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-          featureed pets
+          Featured Pets
         </p>
         <h2 className="mt-2 text-3xl font-bold text-gray-950">
           Pets Available For You

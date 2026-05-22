@@ -23,7 +23,7 @@ const AllPetsPage = () => {
 
     load();
   }, []);
-  console.log(pets);
+  // console.log(pets);
 
   const [search, setSearch] = useState("");
   const [species, setSpecies] = useState("all");
