@@ -14,7 +14,7 @@ export default function MyRequestsPage() {
         if (!session?.user?.email) return;
 
         const res = await fetch(
-          `http://localhost:5000/adoption-requests?email=${session.user.email}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests?email=${session.user.email}`,
         );
 
         const data = await res.json();
@@ -34,9 +34,12 @@ export default function MyRequestsPage() {
 
   const handleCancel = async (id) => {
     try {
-      await fetch(`http://localhost:5000/adoption-requests/${id}`, {
-        method: "DELETE",
-      });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       setRows((current) => current.filter((item) => item._id !== id));
     } catch (error) {
@@ -45,7 +48,7 @@ export default function MyRequestsPage() {
   };
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <section className="min-h-140 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <h1 className="text-3xl font-bold text-gray-950">My Requests</h1>
       <p className="mt-3 text-gray-600">
         Track the pets you requested to adopt and manage each request here.

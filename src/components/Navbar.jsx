@@ -134,6 +134,24 @@ export default function Navbar() {
                   {item.label}
                 </Link>
               ))}
+              <div className="rounded-full border border-white hover:border-gray-300 px-4 pb-2 pt-1 text-sm font-medium transition">
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="mt-1 text-sm text-gray-600 font-semibold"
+                >
+                  Sign Out
+                </button>
+              </div>
+              <div className="rounded-full border border-white hover:border-gray-300 px-4 pb-2 pt-2 text-sm font-medium transition">
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-gray-600 font-semibold"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              </div>
             </div>
             <div className="mt-3 border-t border-gray-200 pt-3">
               {isLoggedIn ? (
@@ -155,20 +173,6 @@ export default function Navbar() {
                     <p className="truncate text-sm font-semibold text-gray-900">
                       {userName}
                     </p>
-                    <Link
-                      href="/dashboard"
-                      className="text-sm text-blue-600 hover:underline"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Dashboard
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={handleSignOut}
-                      className="mt-1 text-sm text-gray-600 hover:text-gray-900 hover:underline"
-                    >
-                      Sign Out
-                    </button>
                   </div>
                 </div>
               ) : (

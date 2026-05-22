@@ -75,7 +75,7 @@ const AllPetsPage = () => {
   }, [pets, search, species, sortBy]);
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
       <div className="mb-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
           All Pets
@@ -89,8 +89,8 @@ const AllPetsPage = () => {
         </p>
       </div>
 
-      <div className="grid gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:grid-cols-12 lg:items-end">
-        <label className="fieldset lg:col-span-6">
+      <div className="grid gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:grid-cols-4">
+        <label className="fieldset">
           <span className="label">Search by name</span>
           <input
             type="text"
@@ -101,7 +101,7 @@ const AllPetsPage = () => {
           />
         </label>
 
-        <label className="fieldset lg:col-span-3">
+        <label className="fieldset">
           <span className="label">Filter by species</span>
           <select
             value={species}
@@ -116,7 +116,7 @@ const AllPetsPage = () => {
           </select>
         </label>
 
-        <label className="fieldset lg:col-span-3">
+        <label className="fieldset">
           <span className="label">Sort</span>
           <select
             value={sortBy}
@@ -130,17 +130,17 @@ const AllPetsPage = () => {
             ))}
           </select>
         </label>
-
-        <div className="flex items-end lg:col-span-12 lg:justify-end">
+        <label className="fieldset">
+          <span className="label opacity-0">Clear Filters</span>
           <button
             type="button"
             onClick={handleClearFilters}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-700"
+            className="inline-flex items-center gap-2 rounded-sm h-10 text-sm px-4 border bg-red-50 border-red-300"
           >
             <span aria-hidden="true">×</span>
             Clear filters
           </button>
-        </div>
+        </label>
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">

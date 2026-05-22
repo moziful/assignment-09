@@ -8,6 +8,8 @@ import Link from "next/link";
 export default function MyListingsPage() {
   const [listings, setListings] = useState([]);
   const [selectedRequests, setSelectedRequests] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [petToDelete, setPetToDelete] = useState(null);
 
   const { data: session } = authClient.useSession();
 
@@ -22,22 +24,34 @@ export default function MyListingsPage() {
   useEffect(() => {
     const load = async () => {
       if (!session?.user?.email) return;
+      setIsLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:5000/pets?email=${session.user.email}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/pets?email=${session.user.email}`,
         );
         const data = await res.json();
         setListings(data);
       } catch (err) {
         console.error("Failed to load listings", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     load();
   }, [session]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-100 w-full items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>
+      </div>
+    );
+  }
+
   const openRequests = async (petId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/adoption-requests/pet/${petId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests/pet/${petId}`,
       );
 
       const data = await res.json();
@@ -59,13 +73,16 @@ export default function MyListingsPage() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/all-pets/${editPet._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets/${editPet._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editForm),
         },
-        body: JSON.stringify(editForm),
-      });
+      );
       if (!res.ok) throw new Error("Update failed");
       const updated = await res.json();
       setListings((prev) =>
@@ -76,19 +93,22 @@ export default function MyListingsPage() {
       console.error(err);
     }
   };
+
   const handleStatusUpdate = async (id, status, petId) => {
     try {
-      const res = await fetch(`http://localhost:5000/adoption-requests/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status, petId }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests/${id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status, petId }),
+        },
+      );
 
       if (!res.ok) throw new Error("Failed");
 
-      // 🔥 reload requests from server (IMPORTANT)
       const refreshed = await fetch(
-        `http://localhost:5000/adoption-requests/pet/${petId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests/pet/${petId}`,
       );
       const data = await refreshed.json();
 
@@ -97,9 +117,8 @@ export default function MyListingsPage() {
         requests: data,
       });
 
-      // 🔥 also reload pets so status updates instantly
       const petsRes = await fetch(
-        `http://localhost:5000/pets?email=${session.user.email}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/pets?email=${session.user.email}`,
       );
       const petsData = await petsRes.json();
       setListings(petsData);
@@ -107,14 +126,30 @@ export default function MyListingsPage() {
       console.error(err);
     }
   };
+
+  const handleDeleteConfirm = async () => {
+    if (!petToDelete) return;
+    try {
+      const res = await fetch(
+        `http://localhost:5000/all-pets/${petToDelete._id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      if (!res.ok) throw new Error("Failed to delete pet");
+
+      setListings((prev) => prev.filter((p) => p._id !== petToDelete._id));
+      setPetToDelete(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-2 sm:px-4 lg:px-6 space-y-10">
+    <div className="mx-auto w-full max-w-7xl px-4 py-2 sm:px-4 lg:px-6 space-y-4">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-          Dashboard
-        </p>
-        <h1 className="mt-2 text-4xl font-bold text-gray-950">My Listings</h1>
-        <p className="mt-3 max-w-2xl text-gray-600">
+        <h1 className="text-4xl font-bold text-gray-950">My Listings</h1>
+        <p className="mt-2 max-w-2xl text-gray-600">
           Manage your pets, track adoption requests, and update listings.
         </p>
       </div>
@@ -132,13 +167,13 @@ export default function MyListingsPage() {
           <p className="text-2xl font-bold text-gray-950">{stats.adopted}</p>
         </div>
       </div>
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         {listings.map((pet) => (
           <article
             key={pet._id}
             className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:bg-blue-50"
           >
-            <div className="relative h-64 w-full">
+            <div className="relative h-40 w-full">
               <Image
                 src={pet.image}
                 alt={pet.name}
@@ -146,7 +181,7 @@ export default function MyListingsPage() {
                 className="object-cover"
               />
             </div>
-            <div className="space-y-3 p-6">
+            <div className="space-y-2 p-6">
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-2xl font-bold text-gray-950">{pet.name}</h2>
                 <span className="rounded-md bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
@@ -183,7 +218,10 @@ export default function MyListingsPage() {
                 >
                   View
                 </Link>
-                <button className="flex-1 rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:border-red-400">
+                <button
+                  onClick={() => setPetToDelete(pet)}
+                  className="flex-1 rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:border-red-400"
+                >
                   Delete
                 </button>
               </div>
@@ -228,7 +266,11 @@ export default function MyListingsPage() {
                     <div className="mt-3 flex gap-2">
                       <button
                         onClick={() =>
-                          handleStatusUpdate(r._id, "approved", pet._id)
+                          handleStatusUpdate(
+                            r._id,
+                            "approved",
+                            selectedRequests.petId,
+                          )
                         }
                         className="rounded-lg bg-emerald-600 px-3 py-1 text-sm text-white"
                       >
@@ -236,7 +278,11 @@ export default function MyListingsPage() {
                       </button>
                       <button
                         onClick={() =>
-                          handleStatusUpdate(r._id, "rejected", pet._id)
+                          handleStatusUpdate(
+                            r._id,
+                            "rejected",
+                            selectedRequests.petId,
+                          )
                         }
                         className="rounded-lg bg-red-600 px-3 py-1 text-sm text-white"
                       >
@@ -308,6 +354,34 @@ export default function MyListingsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {petToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-gray-900">
+              Confirm Deletion
+            </h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete{" "}
+              <strong>{petToDelete.name}</strong>?
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setPetToDelete(null)}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

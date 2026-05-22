@@ -34,12 +34,26 @@ const SignUpPage = () => {
     router.push("/auth/signin");
   };
 
+  const handleGoogleSignIn = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google",
+    });
+  };
+
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-20">
       <form
         onSubmit={onSubmit}
         className="fieldset bg-blue-100 border-base-300 rounded-box w-xs border p-4"
       >
+        <button
+          onClick={handleGoogleSignIn}
+          className="btn mt-1 bg-green-300 border-green-400"
+          type="reset"
+        >
+          Continue with Google
+        </button>
+        <div className="divider">OR</div>
         <fieldset className="fieldset">
           <label className="label">Name</label>
           <input
@@ -94,7 +108,10 @@ const SignUpPage = () => {
           </p>
         ) : null}
 
-        <button className="btn btn-neutral mt-4 border-0 bg-black text-white" type="submit">
+        <button
+          className="btn btn-neutral mt-4 border-0 bg-black text-white"
+          type="submit"
+        >
           Sign Up
         </button>
         <p className="mt-3">

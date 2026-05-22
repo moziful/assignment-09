@@ -6,21 +6,34 @@ import { useEffect, useState } from "react";
 
 const AvailablePets = () => {
   const [pets, setPets] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
+      setIsLoading(true);
       try {
-        const res = await fetch("http://localhost:5000/featured-pets");
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/featured-pets`,
+        );
         const data = await res.json();
 
         setPets(data.slice(0, 6));
       } catch (error) {
         console.error("Failed to fetch pets:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     load();
   }, []);
+  if (isLoading) {
+    return (
+      <div className="flex min-h-100 w-full items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>
+      </div>
+    );
+  }
   return (
     <section
       id="featured-pets"
@@ -34,7 +47,6 @@ const AvailablePets = () => {
           Pets Available For You
         </h2>
       </div>
-
       <div className="grid gap-6 gap-x-10 md:grid-cols-2 xl:grid-cols-3">
         {pets.map((pet) => (
           <article
@@ -74,6 +86,14 @@ const AvailablePets = () => {
             </div>
           </article>
         ))}
+      </div>
+      <div className="flex justify-center w-full">
+        <Link
+          href="/all-pets"
+          className="px-30 mt-10 inline-flex items-center justify-center rounded-xl border border-gray-300 py-3 text-sm font-semibold bg-blue-600 text-white transition"
+        >
+          View All Pets
+        </Link>
       </div>
     </section>
   );

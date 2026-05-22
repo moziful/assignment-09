@@ -21,11 +21,13 @@ export default function PetDetailsPage() {
 
   useEffect(() => {
     if (!params?.id) return;
-
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const load = async () => {
       try {
         console.log("Fetching ID:", params.id);
-        const res = await fetch(`http://localhost:5000/all-pets/${params.id}`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets/${params.id}`,
+        );
         const data = await res.json();
         if (!res.ok) {
           throw new Error(JSON.stringify(data));
@@ -72,13 +74,16 @@ export default function PetDetailsPage() {
         pickupDate,
       };
 
-      const res = await fetch("http://localhost:5000/adoption-requests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
 
       const data = await res.json();
 
@@ -98,8 +103,8 @@ export default function PetDetailsPage() {
 
   if (loading) {
     return (
-      <div className="p-10 text-center text-gray-600">
-        Loading pet details...
+      <div className="flex min-h-100 w-full items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>
       </div>
     );
   }
@@ -123,8 +128,12 @@ export default function PetDetailsPage() {
     );
   }
 
+  // ✅ Edge Case Logic Flags
+  const isAdopted = pet.status === "adopted";
+  const isOwner = session?.user?.email === pet.ownerEmail;
+
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full min-h-160 max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <Link
           href="/all-pets"
@@ -141,7 +150,7 @@ export default function PetDetailsPage() {
       </div>
       <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="relative h-full min-h-[520px] w-full">
+          <div className="relative h-full min-h-116 w-full">
             <Image
               src={pet.image}
               alt={pet.name}
@@ -150,84 +159,150 @@ export default function PetDetailsPage() {
             />
           </div>
         </section>
-        <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold">{pet.name}</h2>
+              <h2 className="text-3xl font-bold text-blue-600">{pet.name}</h2>
               <p className="text-gray-600">{pet.type}</p>
             </div>
             <span className="rounded-md bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
               {pet.fee}
             </span>
           </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="bg-gray-50 p-4 rounded-xl">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 flex-grow">
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
               <p className="text-sm text-gray-500">Age</p>
               <p className="font-semibold">{pet.age}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-xl">
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
               <p className="text-sm text-gray-500">Gender</p>
               <p className="font-semibold">{pet.gender}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-xl">
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
               <p className="text-sm text-gray-500">Location</p>
               <p className="font-semibold">{pet.location}</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-xl">
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
               <p className="text-sm text-gray-500">Health</p>
-              <p className="font-semibold">Healthy</p>
+              <p className="font-semibold">{pet.healthStatus || "Healthy"}</p>
+            </div>
+            <div className="col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <p className="text-sm text-gray-500">Description</p>
+              <p className="font-semibold">
+                {pet.description ||
+                  "This pet is looking for a loving home. It is friendly, playful, and great with families. Adopt now to give this pet a second chance at happiness!"}
+              </p>
             </div>
           </div>
-          <p className="mt-6 text-gray-600">
-            {pet.description ||
-              "This pet is looking for a loving home. It is friendly, playful, and great with families. Adopt now to give this pet a second chance at happiness!"}
-          </p>
-          <button
-            type="button"
-            onClick={handleOpenAdoptForm}
-            className="mt-6 rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700"
-          >
-            Adopt Now
-          </button>
+
+          {/* ✅ Conditional Rendering based on Adopted / Owner status */}
+          <div className="mt-6">
+            {isAdopted ? (
+              <div className="rounded-xl bg-emerald-50 p-4 text-center border border-emerald-200">
+                <p className="text-sm font-semibold text-emerald-700">
+                  🎉 This pet has already found a loving home!
+                </p>
+              </div>
+            ) : isOwner ? (
+              <div className="rounded-xl bg-amber-50 p-4 text-center border border-amber-200">
+                <p className="text-sm font-semibold text-amber-700">
+                  🐾 You cannot adopt this pet since you own this listing!
+                </p>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleOpenAdoptForm}
+                className="w-full rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold transition hover:bg-blue-700"
+              >
+                Adopt Now
+              </button>
+            )}
+          </div>
         </aside>
       </div>
+
       {showAdoptForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6">
-            <div className="flex justify-between">
-              <h2 className="text-xl font-bold">Adoption Form</h2>
-              <button onClick={() => setShowAdoptForm(false)}>Close</button>
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <h2 className="text-xl font-bold text-gray-900">Adoption Form</h2>
+              <button
+                onClick={() => setShowAdoptForm(false)}
+                className="text-gray-500 hover:text-gray-900 font-medium text-sm rounded-lg hover:bg-gray-100 px-3 py-1 transition"
+              >
+                Close
+              </button>
             </div>
             <form onSubmit={handleAdopt} className="mt-6 space-y-4">
-              <input className="input" value={pet.name} readOnly />
-              <input
-                className="input"
-                value={session?.user?.name || ""}
-                readOnly
-              />
-              <input
-                className="input"
-                value={session?.user?.email || ""}
-                readOnly
-              />
-              <input
-                type="date"
-                className="input"
-                value={pickupDate}
-                required
-                onChange={(e) => setPickupDate(e.target.value)}
-              />
-              <textarea
-                className="textarea"
-                value={message}
-                required
-                placeholder="Add a message to the owner..."
-                onChange={(e) => setMessage(e.target.value)}
-              />
-              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+              <fieldset className="fieldset">
+                <label className="label text-sm font-medium text-gray-700">
+                  Pet Name
+                </label>
+                <input
+                  className="input w-full bg-gray-50 border-gray-200 text-gray-500"
+                  value={pet.name}
+                  readOnly
+                />
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <label className="label text-sm font-medium text-gray-700">
+                  Your Name
+                </label>
+                <input
+                  className="input w-full bg-gray-50 border-gray-200 text-gray-500"
+                  value={session?.user?.name || ""}
+                  readOnly
+                />
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <label className="label text-sm font-medium text-gray-700">
+                  Your Email
+                </label>
+                <input
+                  className="input w-full bg-gray-50 border-gray-200 text-gray-500"
+                  value={session?.user?.email || ""}
+                  readOnly
+                />
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <label className="label text-sm font-medium text-gray-700">
+                  Preferred Pickup Date
+                </label>
+                <input
+                  type="date"
+                  className="input w-full border-gray-300"
+                  value={pickupDate}
+                  required
+                  onChange={(e) => setPickupDate(e.target.value)}
+                />
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <label className="label text-sm font-medium text-gray-700">
+                  Message to Owner
+                </label>
+                <textarea
+                  className="textarea w-full border-gray-300 min-h-[100px]"
+                  value={message}
+                  required
+                  placeholder="Tell the owner why you'd be a great match..."
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </fieldset>
+
+              {errorMessage && (
+                <p className="text-sm font-medium text-red-600">
+                  {errorMessage}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg"
+                className="mt-4 w-full rounded-lg bg-blue-600 py-3 text-white font-semibold transition hover:bg-blue-700"
               >
                 Submit Request
               </button>

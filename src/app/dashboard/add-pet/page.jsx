@@ -21,6 +21,8 @@ const initialForm = {
 export default function AddPetPage() {
   const [form, setForm] = useState(initialForm);
   const { data: session } = authClient.useSession();
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const handleChange = (event) => {
@@ -30,7 +32,7 @@ export default function AddPetPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    setIsLoading(true);
     try {
       const payload = {
         name: form.petName,
@@ -46,11 +48,14 @@ export default function AddPetPage() {
         description: form.description,
         ownerEmail: session?.user?.email || "",
       };
-      const res = await fetch("http://localhost:5000/all-pets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Failed to add pet");
@@ -62,16 +67,27 @@ export default function AddPetPage() {
     } finally {
       setForm(initialForm);
       router.push("/all-pets");
+      setIsLoading(false);
     }
   };
+  if (isLoading) {
+    return (
+      <div className="flex min-h-100 w-full items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>
+      </div>
+    );
+  }
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <section className="rounded-xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
       <h1 className="text-3xl font-bold text-gray-950">Add Pet</h1>
       <p className="mt-3 text-gray-600">
         Create a new adoption listing for a pet that needs a home.
       </p>
 
-      <form className="mt-8 grid gap-4 lg:grid-cols-2" onSubmit={handleSubmit}>
+      <form
+        className="mt-4 grid justify-between w-180 gap-4 lg:gap-x-18 lg:grid-cols-2"
+        onSubmit={handleSubmit}
+      >
         <fieldset className="fieldset">
           <label className="label">Pet Name</label>
           <input
@@ -189,13 +205,13 @@ export default function AddPetPage() {
             required
           />
         </fieldset>
-        <fieldset className="fieldset lg:col-span-2">
+        <fieldset className="fieldset w-full lg:col-span-2">
           <label className="label">Description</label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
-            className="textarea textarea-bordered min-h-40 w-full"
+            className="textarea textarea-bordered min-h-30 w-full"
             placeholder="Write a short description..."
           />
         </fieldset>
@@ -211,7 +227,7 @@ export default function AddPetPage() {
         <div className="lg:col-span-2">
           <button
             type="submit"
-            className="btn border-0 bg-blue-600 text-white hover:bg-blue-700"
+            className="btn border-0 px-16 bg-blue-600 text-white hover:bg-blue-700"
           >
             Add Pet
           </button>
