@@ -35,13 +35,13 @@ export default function MyRequestsPage() {
   };
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+    <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <h1 className="text-3xl font-bold text-gray-950">My Requests</h1>
       <p className="mt-3 text-gray-600">
         Track the pets you requested to adopt and manage each request here.
       </p>
 
-      <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200">
+      <div className="mt-8 overflow-hidden rounded-xl border border-gray-200">
         <div className="grid grid-cols-5 gap-4 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-600">
           <span>Pet Name</span>
           <span>Request Date</span>
@@ -56,17 +56,19 @@ export default function MyRequestsPage() {
               key={item.id}
               className="grid grid-cols-5 gap-4 px-4 py-4 text-sm text-gray-700"
             >
-              <span className="font-semibold text-gray-950">{item.petName}</span>
+              <span className="font-semibold text-gray-950">
+                {item.petName}
+              </span>
               <span>{item.requestDate}</span>
               <span>{item.pickupDate}</span>
               <span>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  className={`rounded-xl px-3 py-1 text-xs font-semibold ${
                     item.status === "Pending"
                       ? "bg-amber-100 text-amber-700"
                       : item.status === "Approved"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-rose-100 text-rose-700"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-rose-100 text-rose-700"
                   }`}
                 >
                   {item.status}
@@ -75,14 +77,14 @@ export default function MyRequestsPage() {
               <span className="flex items-center gap-2">
                 <Link
                   href={`/all-pets/${item.id}`}
-                  className="rounded-full border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700"
+                  className="rounded-xl border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700"
                 >
                   View
                 </Link>
                 <button
                   type="button"
                   onClick={() => handleCancel(item.id)}
-                  className="rounded-full border border-red-300 px-3 py-2 text-xs font-semibold text-red-600"
+                  className="rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-600"
                 >
                   Cancel
                 </button>

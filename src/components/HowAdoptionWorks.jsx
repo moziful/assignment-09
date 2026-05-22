@@ -1,4 +1,9 @@
-import { FaMagnifyingGlass, FaFilePen, FaHandHoldingHeart, FaHouse } from "react-icons/fa6";
+import {
+  FaMagnifyingGlass,
+  FaFilePen,
+  FaHandHoldingHeart,
+  FaHouse,
+} from "react-icons/fa6";
 
 const HowAdoptionWorks = () => {
   return (
@@ -13,30 +18,38 @@ const HowAdoptionWorks = () => {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <FaMagnifyingGlass className="text-2xl text-blue-600" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-950">Browse pets</h3>
+          <h3 className="mt-4 text-lg font-semibold text-gray-950">
+            Browse pets
+          </h3>
           <p className="mt-2 text-sm leading-6 text-gray-700">
             Explore pets and find one that matches your home and lifestyle.
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <FaFilePen className="text-2xl text-emerald-600" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-950">Submit request</h3>
+          <h3 className="mt-4 text-lg font-semibold text-gray-950">
+            Submit request
+          </h3>
           <p className="mt-2 text-sm leading-6 text-gray-700">
             Send an adoption request with your basic information.
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <FaHandHoldingHeart className="text-2xl text-rose-500" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-950">Meet the pet</h3>
+          <h3 className="mt-4 text-lg font-semibold text-gray-950">
+            Meet the pet
+          </h3>
           <p className="mt-2 text-sm leading-6 text-gray-700">
             Connect with the pet and make sure it feels like the right match.
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <FaHouse className="text-2xl text-amber-600" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-950">Bring them home</h3>
+          <h3 className="mt-4 text-lg font-semibold text-gray-950">
+            Bring them home
+          </h3>
           <p className="mt-2 text-sm leading-6 text-gray-700">
             Finish the process and welcome your new family member home.
           </p>

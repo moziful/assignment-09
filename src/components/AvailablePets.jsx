@@ -21,7 +21,7 @@ const AvailablePets = () => {
         {pets.map((pet) => (
           <article
             key={pet.id}
-            className="overflow-hidden rounded-2xl border border-gray-200 bg-white hover:bg-blue-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            className="overflow-hidden rounded-xl border border-gray-200 bg-white hover:bg-blue-100 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
           >
             <div className="relative h-64 w-full">
               <Image
@@ -49,13 +49,13 @@ const AvailablePets = () => {
               <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <Link
                   href={`/all-pets/${pet.id}`}
-                  className="inline-flex flex-1 items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
+                  className="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
                 >
-                  View Details
+                  View Detailssss
                 </Link>
                 <Link
                   href="/all-pets"
-                  className="inline-flex flex-1 items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                 >
                   Adopt Now
                 </Link>

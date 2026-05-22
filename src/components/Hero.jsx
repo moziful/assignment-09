@@ -32,13 +32,13 @@ const Hero = () => {
       </div>
       <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
         <div className="absolute rounded-3xl bg-blue-500/10 blur-3xl" />
-        <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-gray-200/60">
+        <div className="relative overflow-hidden rounded-xl shadow-xl shadow-gray-200/60">
           <Image
             src="/pet-hero.jpg"
             alt="Cute pet for adoption"
             width={200}
             height={200}
-            className="h-auto w-full rounded-2xl object-cover"
+            className="h-auto w-full rounded-xl object-cover"
           />
         </div>
       </div>

@@ -24,7 +24,7 @@ export default function AllPetsPage() {
 
   const speciesOptions = useMemo(
     () => ["all", ...new Set(pets.map((pet) => pet.type))],
-    []
+    [],
   );
 
   const filteredPets = useMemo(() => {
@@ -32,8 +32,7 @@ export default function AllPetsPage() {
 
     const result = pets.filter((pet) => {
       const matchesSearch =
-        !normalizedSearch ||
-        pet.name.toLowerCase().includes(normalizedSearch);
+        !normalizedSearch || pet.name.toLowerCase().includes(normalizedSearch);
       const matchesSpecies = species === "all" || pet.type === species;
       return matchesSearch && matchesSpecies;
     });
@@ -43,14 +42,14 @@ export default function AllPetsPage() {
       sortedPets.sort(
         (a, b) =>
           Number.parseInt(a.fee.replace(/\D/g, ""), 10) -
-          Number.parseInt(b.fee.replace(/\D/g, ""), 10)
+          Number.parseInt(b.fee.replace(/\D/g, ""), 10),
       );
     }
     if (sortBy === "fee-desc") {
       sortedPets.sort(
         (a, b) =>
           Number.parseInt(b.fee.replace(/\D/g, ""), 10) -
-          Number.parseInt(a.fee.replace(/\D/g, ""), 10)
+          Number.parseInt(a.fee.replace(/\D/g, ""), 10),
       );
     }
     if (sortBy === "name") {
@@ -75,7 +74,7 @@ export default function AllPetsPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:grid-cols-12 lg:items-end">
+      <div className="grid gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:grid-cols-12 lg:items-end">
         <label className="fieldset lg:col-span-6">
           <span className="label">Search by name</span>
           <input
@@ -133,15 +132,22 @@ export default function AllPetsPage() {
         {filteredPets.map((pet) => (
           <article
             key={pet.id}
-            className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
           >
             <div className="relative h-64 w-full">
-              <Image src={pet.image} alt={pet.name} fill className="object-cover" />
+              <Image
+                src={pet.image}
+                alt={pet.name}
+                fill
+                className="object-cover"
+              />
             </div>
             <div className="space-y-3 p-6">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-950">{pet.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-950">
+                    {pet.name}
+                  </h2>
                   <p className="text-sm text-gray-600">{pet.type}</p>
                 </div>
                 <span className="rounded-md bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">

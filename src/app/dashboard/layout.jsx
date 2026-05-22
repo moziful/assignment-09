@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }) {
   return (
     <DashboardGuard>
       <div className="mx-auto flex w-full max-w-7xl flex-1 gap-6 px-4 py-8 sm:px-6 lg:px-8">
-        <aside className="w-full max-w-xs shrink-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        <aside className="w-full max-w-xs shrink-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
           <h2 className="px-3 text-lg font-bold text-gray-950">Dashboard</h2>
           <nav className="mt-4 space-y-2">
             {navItems.map((item) => (

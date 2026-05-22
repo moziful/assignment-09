@@ -11,7 +11,7 @@ const FAQs = () => {
       </div>
 
       <div className="space-y-4">
-        <details className="rounded-2xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
+        <details className="rounded-xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
           <summary className="cursor-pointer list-none text-lg font-semibold text-gray-950">
             What do I need to adopt a pet?
           </summary>
@@ -20,7 +20,7 @@ const FAQs = () => {
             willingness to provide a safe and caring home.
           </p>
         </details>
-        <details className="rounded-2xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
+        <details className="rounded-xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
           <summary className="cursor-pointer list-none text-lg font-semibold text-gray-950">
             Is there an adoption fee?
           </summary>
@@ -29,7 +29,7 @@ const FAQs = () => {
             medical needs before adoption.
           </p>
         </details>
-        <details className="rounded-2xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
+        <details className="rounded-xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
           <summary className="cursor-pointer list-none text-lg font-semibold text-gray-950">
             Can I meet the pet first?
           </summary>
@@ -38,7 +38,7 @@ const FAQs = () => {
             it feels like the right match for both sides.
           </p>
         </details>
-        <details className="rounded-2xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
+        <details className="rounded-xl border border-gray-200 bg-white p-5 hover:bg-blue-100 shadow-sm">
           <summary className="cursor-pointer list-none text-lg font-semibold text-gray-950">
             What happens after I submit a request?
           </summary>

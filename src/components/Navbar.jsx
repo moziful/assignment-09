@@ -45,7 +45,7 @@ export default function Navbar() {
           className="flex items-center gap-3"
           onClick={() => setMobileMenuOpen(false)}
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500 text-3xl font-black text-white shadow-lg shadow-blue-500/20">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500 text-3xl font-black text-white shadow-lg shadow-blue-500/20">
             <MdOutlinePets />
           </span>
           <p className="text-xl font-semibold text-gray-900">PetBuddy</p>
@@ -87,7 +87,7 @@ export default function Navbar() {
               </button>
               <ul
                 tabIndex={0}
-                className="menu dropdown-content mt-3 w-52 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl"
+                className="menu dropdown-content mt-3 w-52 rounded-xl border border-gray-200 bg-white p-2 shadow-xl"
               >
                 <li>
                   <Link href="/dashboard">Dashboard</Link>
@@ -119,7 +119,7 @@ export default function Navbar() {
             <GiHamburgerMenu />
           </button>
           <div
-            className={`dropdown-content mt-3 w-72 rounded-2xl border border-gray-200 bg-white p-3 shadow-xl ${
+            className={`dropdown-content mt-3 w-72 rounded-xl border border-gray-200 bg-white p-3 shadow-xl ${
               mobileMenuOpen ? "block" : "hidden"
             }`}
           >
@@ -137,7 +137,7 @@ export default function Navbar() {
             </div>
             <div className="mt-3 border-t border-gray-200 pt-3">
               {isLoggedIn ? (
-                <div className="flex items-center gap-3 rounded-2xl px-3 py-2">
+                <div className="flex items-center gap-3 rounded-xl px-3 py-2">
                   {canUseUserImage ? (
                     <Image
                       src={userImage}

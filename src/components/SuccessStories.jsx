@@ -12,7 +12,7 @@ const SuccessStories = () => {
         </h2>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <FaCat className="text-2xl text-rose-500" />
             <div className="flex items-center gap-1 text-amber-500">
@@ -34,7 +34,7 @@ const SuccessStories = () => {
             <p className="text-sm text-gray-600">Persian Cat</p>
           </div>
         </div>
-        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <FaDog className="text-2xl text-blue-600" />
             <div className="flex items-center gap-1 text-amber-500">
@@ -56,7 +56,7 @@ const SuccessStories = () => {
             <p className="text-sm text-gray-600">Golden Retriever</p>
           </div>
         </div>
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <FaPaw className="text-2xl text-emerald-600" />
             <div className="flex items-center gap-1 text-amber-500">
