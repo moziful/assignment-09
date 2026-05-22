@@ -49,7 +49,6 @@ const AvailablePets = () => {
                 className="object-cover"
               />
             </div>
-
             <div className="space-y-3 p-6">
               <div className="flex items-start justify-between gap-4">
                 <h3 className="text-2xl font-bold text-gray-950">{pet.name}</h3>
