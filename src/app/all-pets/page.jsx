@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { pets } from "@/lib/pets-data";
+import { useEffect, useMemo, useState } from "react";
+import { getAllPets } from "@/lib/data";
 
 const sortOptions = [
   { value: "latest", label: "Latest" },
@@ -12,7 +12,19 @@ const sortOptions = [
   { value: "name", label: "Name A-Z" },
 ];
 
-export default function AllPetsPage() {
+const AllPetsPage = () => {
+  const [pets, setPets] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getAllPets();
+      setPets(data);
+    };
+
+    load();
+  }, []);
+  console.log(pets);
+
   const [search, setSearch] = useState("");
   const [species, setSpecies] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
@@ -24,7 +36,7 @@ export default function AllPetsPage() {
 
   const speciesOptions = useMemo(
     () => ["all", ...new Set(pets.map((pet) => pet.type))],
-    [],
+    [pets],
   );
 
   const filteredPets = useMemo(() => {
@@ -33,31 +45,34 @@ export default function AllPetsPage() {
     const result = pets.filter((pet) => {
       const matchesSearch =
         !normalizedSearch || pet.name.toLowerCase().includes(normalizedSearch);
+
       const matchesSpecies = species === "all" || pet.type === species;
+
       return matchesSearch && matchesSpecies;
     });
 
     const sortedPets = [...result];
+
     if (sortBy === "fee-asc") {
       sortedPets.sort(
         (a, b) =>
-          Number.parseInt(a.fee.replace(/\D/g, ""), 10) -
-          Number.parseInt(b.fee.replace(/\D/g, ""), 10),
+          Number(a.fee.replace(/\D/g, "")) - Number(b.fee.replace(/\D/g, "")),
       );
     }
+
     if (sortBy === "fee-desc") {
       sortedPets.sort(
         (a, b) =>
-          Number.parseInt(b.fee.replace(/\D/g, ""), 10) -
-          Number.parseInt(a.fee.replace(/\D/g, ""), 10),
+          Number(b.fee.replace(/\D/g, "")) - Number(a.fee.replace(/\D/g, "")),
       );
     }
+
     if (sortBy === "name") {
       sortedPets.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     return sortedPets;
-  }, [search, species, sortBy]);
+  }, [pets, search, species, sortBy]);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -177,4 +192,6 @@ export default function AllPetsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default AllPetsPage;
