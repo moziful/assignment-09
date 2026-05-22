@@ -82,7 +82,7 @@ export default function PetDetailsPage() {
           </p>
           <Link
             href="/all-pets"
-            className="mt-6 inline-flex rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white"
+            className="mt-6 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white"
           >
             Back to All Pets
           </Link>
@@ -151,7 +151,7 @@ export default function PetDetailsPage() {
           </p>
           <button
             onClick={handleOpenAdoptForm}
-            className="mt-6 rounded-full bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700"
+            className="mt-6 rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700"
           >
             Adopt Now
           </button>

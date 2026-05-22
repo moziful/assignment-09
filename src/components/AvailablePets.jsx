@@ -66,16 +66,10 @@ const AvailablePets = () => {
 
               <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <Link
-                  href={`/all-pets/${pet.id}`}
+                  href={`/all-pets/${pet._id}`}
                   className="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
                 >
                   View Details
-                </Link>
-                <Link
-                  href="/all-pets"
-                  className="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-                >
-                  Adopt Now
                 </Link>
               </div>
             </div>

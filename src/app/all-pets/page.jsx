@@ -179,12 +179,6 @@ const AllPetsPage = () => {
                 >
                   View Details
                 </Link>
-                <Link
-                  href="/auth/signin"
-                  className="inline-flex flex-1 items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-                >
-                  Adopt Now
-                </Link>
               </div>
             </div>
           </article>
