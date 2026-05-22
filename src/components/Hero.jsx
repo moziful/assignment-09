@@ -28,7 +28,7 @@ const Hero = () => {
               <MdPets /> Adopt Now
             </Link>
             <Link
-              href="/add-pet"
+              href="/dashboard/add-pet"
               className="inline-flex items-center gap-2 justify-center rounded-xl bg-blue-100 dark:bg-gray-800 px-6 py-3 text-base font-semibold text-blue-700 dark:text-blue-300 shadow-lg shadow-blue-600/20 transition hover:bg-blue-200 dark:hover:bg-gray-700"
             >
               <MdAddCircleOutline /> Add a pet
