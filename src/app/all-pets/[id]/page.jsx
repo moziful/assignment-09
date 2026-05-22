@@ -2,24 +2,45 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { pets } from "@/lib/pets-data";
 
 export default function PetDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { data: session } = authClient.useSession();
+
+  const [pet, setPet] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const [showAdoptForm, setShowAdoptForm] = useState(false);
   const [pickupDate, setPickupDate] = useState("");
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const pet = useMemo(
-    () => pets.find((item) => String(item.id) === String(params.id)),
-    [params.id],
-  );
+  useEffect(() => {
+    if (!params?.id) return;
+
+    const load = async () => {
+      try {
+        console.log("Fetching ID:", params.id);
+        const res = await fetch(`http://localhost:5000/all-pets/${params.id}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(JSON.stringify(data));
+        }
+        setPet(data);
+      } catch (error) {
+        console.error("Fetch error:", error.message);
+        setPet(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [params?.id]);
+
   const handleOpenAdoptForm = () => {
     if (!session?.user) {
       router.push("/auth/signin");
@@ -27,6 +48,7 @@ export default function PetDetailsPage() {
     }
     setShowAdoptForm(true);
   };
+
   const handleAdopt = (event) => {
     event.preventDefault();
     if (!pickupDate) {
@@ -41,6 +63,15 @@ export default function PetDetailsPage() {
     setShowAdoptForm(false);
     router.push("/dashboard/my-requests");
   };
+
+  if (loading) {
+    return (
+      <div className="p-10 text-center text-gray-600">
+        Loading pet details...
+      </div>
+    );
+  }
+
   if (!pet) {
     return (
       <div className="mx-auto flex w-full max-w-7xl flex-1 items-center justify-center px-4 py-16">
@@ -73,8 +104,7 @@ export default function PetDetailsPage() {
           {pet.name} adoption details
         </h1>
         <p className="mt-2 text-gray-600">
-          Explore the pet details on the left and open the adoption form when
-          you are ready.
+          Explore the pet details and adopt when ready.
         </p>
       </div>
       <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -89,131 +119,82 @@ export default function PetDetailsPage() {
           </div>
         </section>
         <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-gray-950">{pet.name}</h2>
-              <p className="mt-1 text-gray-600">{pet.type}</p>
+              <h2 className="text-3xl font-bold">{pet.name}</h2>
+              <p className="text-gray-600">{pet.type}</p>
             </div>
             <span className="rounded-md bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
               {pet.fee}
             </span>
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-gray-50 p-4">
+            <div className="bg-gray-50 p-4 rounded-xl">
               <p className="text-sm text-gray-500">Age</p>
-              <p className="font-semibold text-gray-950">{pet.age}</p>
+              <p className="font-semibold">{pet.age}</p>
             </div>
-            <div className="rounded-xl bg-gray-50 p-4">
+            <div className="bg-gray-50 p-4 rounded-xl">
               <p className="text-sm text-gray-500">Gender</p>
-              <p className="font-semibold text-gray-950">{pet.gender}</p>
+              <p className="font-semibold">{pet.gender}</p>
             </div>
-            <div className="rounded-xl bg-gray-50 p-4">
+            <div className="bg-gray-50 p-4 rounded-xl">
               <p className="text-sm text-gray-500">Location</p>
-              <p className="font-semibold text-gray-950">{pet.location}</p>
+              <p className="font-semibold">{pet.location}</p>
             </div>
-            <div className="rounded-xl bg-gray-50 p-4">
-              <p className="text-sm text-gray-500">Health Status</p>
-              <p className="font-semibold text-gray-950">Healthy and active</p>
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <p className="text-sm text-gray-500">Health</p>
+              <p className="font-semibold">Healthy</p>
             </div>
           </div>
           <p className="mt-6 text-gray-600">
-            This pet is ready for a loving home and is waiting for the right
-            adopter to continue a happy life.
+            This pet is ready for adoption and looking for a loving home.
           </p>
           <button
-            type="button"
             onClick={handleOpenAdoptForm}
-            className="mt-6 inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+            className="mt-6 rounded-full bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700"
           >
             Adopt Now
           </button>
         </aside>
       </div>
-      {showAdoptForm ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-8">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-950">
-                  Adoption Form
-                </h2>
-                <p className="mt-1 text-sm text-gray-600">
-                  Fill in the details to request adoption.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowAdoptForm(false)}
-                className="rounded-full border border-gray-300 px-3 py-1 text-sm font-semibold text-gray-600"
-              >
-                Close
-              </button>
+      {showAdoptForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-bold">Adoption Form</h2>
+              <button onClick={() => setShowAdoptForm(false)}>Close</button>
             </div>
-
             <form onSubmit={handleAdopt} className="mt-6 space-y-4">
-              <fieldset className="fieldset">
-                <label className="label">Pet Name</label>
-                <input
-                  type="text"
-                  className="input validator"
-                  value={pet.name}
-                  readOnly
-                />
-              </fieldset>
-              <fieldset className="fieldset">
-                <label className="label">User Name</label>
-                <input
-                  type="text"
-                  className="input validator"
-                  value={session?.user?.name || ""}
-                  readOnly
-                />
-              </fieldset>
-              <fieldset className="fieldset">
-                <label className="label">User Email</label>
-                <input
-                  type="email"
-                  className="input validator"
-                  value={session?.user?.email || ""}
-                  readOnly
-                />
-              </fieldset>
-              <fieldset className="fieldset">
-                <label className="label">Pickup Date</label>
-                <input
-                  type="date"
-                  className="input validator"
-                  value={pickupDate}
-                  onChange={(event) => setPickupDate(event.target.value)}
-                  required
-                />
-              </fieldset>
-              <fieldset className="fieldset">
-                <label className="label">Message</label>
-                <textarea
-                  className="textarea textarea-bordered min-h-32 w-full"
-                  value={message}
-                  onChange={(event) => setMessage(event.target.value)}
-                  placeholder="Write a short note..."
-                  required
-                />
-              </fieldset>
-              {errorMessage ? (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
-                  {errorMessage}
-                </p>
-              ) : null}
-
-              <button
-                type="submit"
-                className="btn w-full border-0 bg-blue-600 text-white hover:bg-blue-700"
-              >
-                Submit Adoption Request
+              <input className="input" value={pet.name} readOnly />
+              <input
+                className="input"
+                value={session?.user?.name || ""}
+                readOnly
+              />
+              <input
+                className="input"
+                value={session?.user?.email || ""}
+                readOnly
+              />
+              <input
+                type="date"
+                className="input"
+                value={pickupDate}
+                onChange={(e) => setPickupDate(e.target.value)}
+              />
+              <textarea
+                className="textarea"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+              <button className="w-full bg-blue-600 text-white py-2 rounded-lg">
+                Submit Request
               </button>
             </form>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

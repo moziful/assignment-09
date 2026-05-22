@@ -135,7 +135,7 @@ const AllPetsPage = () => {
           <button
             type="button"
             onClick={handleClearFilters}
-            className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-700"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-700"
           >
             <span aria-hidden="true">×</span>
             Clear filters
@@ -174,14 +174,14 @@ const AllPetsPage = () => {
               </p>
               <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <Link
-                  href={`/all-pets/${pet.id}`}
-                  className="inline-flex flex-1 items-center justify-center rounded-full border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
+                  href={`/all-pets/${pet._id}`}
+                  className="inline-flex flex-1 items-center justify-center rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
                 >
                   View Details
                 </Link>
                 <Link
                   href="/auth/signin"
-                  className="inline-flex flex-1 items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="inline-flex flex-1 items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                 >
                   Adopt Now
                 </Link>

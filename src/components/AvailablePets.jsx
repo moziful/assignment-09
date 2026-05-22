@@ -69,7 +69,7 @@ const AvailablePets = () => {
                   href={`/all-pets/${pet.id}`}
                   className="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
                 >
-                  View Detailssss
+                  View Details
                 </Link>
                 <Link
                   href="/all-pets"
