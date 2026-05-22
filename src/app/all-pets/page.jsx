@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getAllPets } from "@/lib/data";
 
 const sortOptions = [
-  { value: "latest", label: "Latest" },
+  { value: "None", label: "None" },
   { value: "fee-asc", label: "Fee: Low to High" },
   { value: "fee-desc", label: "Fee: High to Low" },
   { value: "name", label: "Name A-Z" },

@@ -1,37 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-
-const requests = [
-  {
-    id: 1,
-    petName: "Milo",
-    requestDate: "2026-05-19",
-    pickupDate: "2026-05-22",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    petName: "Luna",
-    requestDate: "2026-05-18",
-    pickupDate: "2026-05-21",
-    status: "Approved",
-  },
-  {
-    id: 3,
-    petName: "Coco",
-    requestDate: "2026-05-17",
-    pickupDate: "2026-05-23",
-    status: "Rejected",
-  },
-];
+import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export default function MyRequestsPage() {
-  const [rows, setRows] = useState(requests);
+  const [rows, setRows] = useState([]);
+  const { data: session } = authClient.useSession();
 
-  const handleCancel = (id) => {
-    setRows((current) => current.filter((item) => item.id !== id));
+  useEffect(() => {
+    const load = async () => {
+      try {
+        if (!session?.user?.email) return;
+
+        const res = await fetch(
+          `http://localhost:5000/adoption-requests?email=${session.user.email}`,
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to load requests");
+        }
+
+        setRows(data);
+      } catch (error) {
+        console.error("Failed to load requests:", error);
+      }
+    };
+
+    load();
+  }, [session]);
+
+  const handleCancel = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/adoption-requests/${id}`, {
+        method: "DELETE",
+      });
+
+      setRows((current) => current.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error("Failed to cancel request", error);
+    }
   };
 
   return (
@@ -42,6 +52,7 @@ export default function MyRequestsPage() {
       </p>
 
       <div className="mt-8 overflow-hidden rounded-xl border border-gray-200">
+        {/* HEADER */}
         <div className="grid grid-cols-5 gap-4 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-600">
           <span>Pet Name</span>
           <span>Request Date</span>
@@ -50,23 +61,31 @@ export default function MyRequestsPage() {
           <span>Action</span>
         </div>
 
+        {/* ROWS */}
         <div className="divide-y divide-gray-200">
           {rows.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="grid grid-cols-5 gap-4 px-4 py-4 text-sm text-gray-700"
             >
               <span className="font-semibold text-gray-950">
                 {item.petName}
               </span>
-              <span>{item.requestDate}</span>
+
+              <span>
+                {item.requestedAt
+                  ? new Date(item.requestedAt).toLocaleDateString()
+                  : "-"}
+              </span>
+
               <span>{item.pickupDate}</span>
+
               <span>
                 <span
                   className={`rounded-xl px-3 py-1 text-xs font-semibold ${
-                    item.status === "Pending"
+                    item.status === "pending"
                       ? "bg-amber-100 text-amber-700"
-                      : item.status === "Approved"
+                      : item.status === "approved"
                         ? "bg-emerald-100 text-emerald-700"
                         : "bg-rose-100 text-rose-700"
                   }`}
@@ -74,16 +93,18 @@ export default function MyRequestsPage() {
                   {item.status}
                 </span>
               </span>
+
               <span className="flex items-center gap-2">
                 <Link
-                  href={`/all-pets/${item.id}`}
+                  href={`/all-pets/${item.petId}`}
                   className="rounded-xl border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700"
                 >
                   View
                 </Link>
+
                 <button
                   type="button"
-                  onClick={() => handleCancel(item.id)}
+                  onClick={() => handleCancel(item._id)}
                   className="rounded-xl border border-red-300 px-3 py-2 text-xs font-semibold text-red-600"
                 >
                   Cancel

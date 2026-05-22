@@ -49,19 +49,51 @@ export default function PetDetailsPage() {
     setShowAdoptForm(true);
   };
 
-  const handleAdopt = (event) => {
+  const handleAdopt = async (event) => {
     event.preventDefault();
-    if (!pickupDate) {
-      setErrorMessage("Please select a pickup date.");
+
+    if (!pickupDate || !message.trim()) {
+      setErrorMessage("Please fill all fields");
       return;
     }
-    if (!message.trim()) {
-      setErrorMessage("Please add a short message.");
-      return;
+
+    try {
+      const payload = {
+        petId: pet._id,
+        petName: pet.name,
+        petImage: pet.image,
+
+        requesterName: session?.user?.name,
+        requesterEmail: session?.user?.email,
+
+        ownerEmail: pet.ownerEmail || "",
+
+        message,
+        pickupDate,
+      };
+
+      const res = await fetch("http://localhost:5000/adoption-requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to create request");
+      }
+
+      console.log("SUCCESS:", data);
+
+      setShowAdoptForm(false);
+      router.push("/dashboard/my-requests");
+    } catch (error) {
+      console.error("ADOPTION ERROR:", error);
+      setErrorMessage(error.message);
     }
-    setErrorMessage("");
-    setShowAdoptForm(false);
-    router.push("/dashboard/my-requests");
   };
 
   if (loading) {
@@ -147,9 +179,11 @@ export default function PetDetailsPage() {
             </div>
           </div>
           <p className="mt-6 text-gray-600">
-            This pet is ready for adoption and looking for a loving home.
+            {pet.description ||
+              "This pet is looking for a loving home. It is friendly, playful, and great with families. Adopt now to give this pet a second chance at happiness!"}
           </p>
           <button
+            type="button"
             onClick={handleOpenAdoptForm}
             className="mt-6 rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700"
           >
@@ -180,15 +214,21 @@ export default function PetDetailsPage() {
                 type="date"
                 className="input"
                 value={pickupDate}
+                required
                 onChange={(e) => setPickupDate(e.target.value)}
               />
               <textarea
                 className="textarea"
                 value={message}
+                required
+                placeholder="Add a message to the owner..."
                 onChange={(e) => setMessage(e.target.value)}
               />
               {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-              <button className="w-full bg-blue-600 text-white py-2 rounded-lg">
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded-lg"
+              >
                 Submit Request
               </button>
             </form>
