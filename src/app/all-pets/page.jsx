@@ -3,6 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import {
+  MdSearch,
+  MdFilterList,
+  MdSort,
+  MdClose,
+  MdRemoveRedEye,
+  MdLocationOn,
+  MdPets,
+  MdCake,
+  MdTransgender,
+} from "react-icons/md";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const sortOptions = [
   { value: "None", label: "None" },
@@ -14,6 +27,9 @@ const sortOptions = [
 const AllPetsPage = () => {
   const [pets, setPets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [species, setSpecies] = useState("all");
+  const [sortBy, setSortBy] = useState("None");
 
   useEffect(() => {
     const load = async () => {
@@ -22,32 +38,16 @@ const AllPetsPage = () => {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets`,
         );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch pets");
-        }
-
-        const data = await res.json();
-        setPets(data);
+        if (!res.ok) throw new Error("Failed to fetch pets");
+        setPets(await res.json());
       } catch (error) {
-        console.error("Error loading pets:", error);
+        toast.error("Error loading pets");
       } finally {
         setIsLoading(false);
       }
     };
-
     load();
   }, []);
-
-  const [search, setSearch] = useState("");
-  const [species, setSpecies] = useState("all");
-  const [sortBy, setSortBy] = useState("latest");
-
-  const handleClearFilters = () => {
-    setSearch("");
-    setSpecies("all");
-    setSortBy("latest");
-  };
 
   const speciesOptions = useMemo(
     () => ["all", ...new Set(pets.map((pet) => pet.type))],
@@ -56,161 +56,159 @@ const AllPetsPage = () => {
 
   const filteredPets = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
-
-    const result = pets.filter((pet) => {
+    let result = pets.filter((pet) => {
       const matchesSearch =
         !normalizedSearch || pet.name.toLowerCase().includes(normalizedSearch);
-
       const matchesSpecies = species === "all" || pet.type === species;
-
       return matchesSearch && matchesSpecies;
     });
 
-    const sortedPets = [...result];
-
-    if (sortBy === "fee-asc") {
-      sortedPets.sort(
+    if (sortBy === "fee-asc")
+      result.sort(
         (a, b) =>
           Number(a.fee.replace(/\D/g, "")) - Number(b.fee.replace(/\D/g, "")),
       );
-    }
-
-    if (sortBy === "fee-desc") {
-      sortedPets.sort(
+    if (sortBy === "fee-desc")
+      result.sort(
         (a, b) =>
           Number(b.fee.replace(/\D/g, "")) - Number(a.fee.replace(/\D/g, "")),
       );
-    }
+    if (sortBy === "name") result.sort((a, b) => a.name.localeCompare(b.name));
 
-    if (sortBy === "name") {
-      sortedPets.sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    return sortedPets;
+    return result;
   }, [pets, search, species, sortBy]);
 
   if (isLoading) {
     return (
-      <div className="flex min-h-150 w-full items-center justify-center">
+      <div className="flex min-h-150 w-full items-center justify-center dark:text-gray-400">
         <span className="loading loading-spinner loading-lg text-blue-600"></span>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-      <div className="mb-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-          All Pets
-        </p>
-        <h1 className="mt-2 text-4xl font-bold text-gray-950">
-          Browse all pets available for adoption
-        </h1>
-        <p className="mt-3 max-w-2xl text-gray-600">
-          Search by name, filter by species, and sort the listings to find the
-          right companion faster.
-        </p>
-      </div>
+    <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8 dark:bg-gray-950 transition-colors">
+      <ScrollReveal>
+        <div className="mb-10">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">
+            All Pets
+          </p>
+          <h1 className="mt-2 text-4xl font-bold text-gray-950 dark:text-white">
+            Browse all pets available for adoption
+          </h1>
+        </div>
+      </ScrollReveal>
 
-      <div className="grid gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm lg:grid-cols-4">
-        <label className="fieldset">
-          <span className="label">Search by name</span>
-          <input
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            className="input validator"
-            placeholder="Search pets"
-          />
-        </label>
-
-        <label className="fieldset">
-          <span className="label">Filter by species</span>
-          <select
-            value={species}
-            onChange={(event) => setSpecies(event.target.value)}
-            className="select select-bordered w-full"
-          >
-            {speciesOptions.map((option) => (
-              <option key={option} value={option}>
-                {option === "all" ? "All Species" : option}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="fieldset">
-          <span className="label">Sort</span>
-          <select
-            value={sortBy}
-            onChange={(event) => setSortBy(event.target.value)}
-            className="select select-bordered w-full"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="fieldset">
-          <span className="label opacity-0">Clear Filters</span>
+      <ScrollReveal>
+        <div className="grid gap-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm lg:grid-cols-4">
+          <div className="relative flex items-center">
+            <MdSearch className="absolute left-3 text-gray-400" size={20} />
+            <input
+              className="input w-full border border-gray-200 dark:border-gray-700 pl-10 dark:bg-gray-950 dark:text-white"
+              placeholder="Search name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="relative flex items-center">
+            <MdFilterList className="absolute left-3 text-gray-400" size={20} />
+            <select
+              className="select select-bordered w-full pl-10 dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+              value={species}
+              onChange={(e) => setSpecies(e.target.value)}
+            >
+              {speciesOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt === "all" ? "All Species" : opt}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="relative flex items-center">
+            <MdSort className="absolute left-3 text-gray-400" size={20} />
+            <select
+              className="select select-bordered w-full pl-10 dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
-            type="button"
-            onClick={handleClearFilters}
-            className="inline-flex items-center gap-2 rounded-sm h-10 text-sm px-4 border bg-red-50 border-red-300"
+            className="btn btn-outline dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 flex items-center gap-2"
+            onClick={() => {
+              setSearch("");
+              setSpecies("all");
+              setSortBy("None");
+            }}
           >
-            <span aria-hidden="true">×</span>
-            Clear filters
+            <MdClose /> Clear Filters
           </button>
-        </label>
-      </div>
+        </div>
+      </ScrollReveal>
 
       {filteredPets.length === 0 ? (
-        <div className="mt-8 flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-16 shadow-sm">
-          <p className="text-lg font-semibold text-gray-900">No pets found</p>
-          <p className="text-gray-500">Try adjusting your search or filters.</p>
+        <div className="mt-8 text-center py-16 dark:text-gray-400">
+          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+            No pets found
+          </p>
         </div>
       ) : (
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {filteredPets.map((pet) => (
-            <article
-              key={pet._id}
-              className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="relative h-64 w-full">
-                <Image
-                  src={pet.image}
-                  alt={pet.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="space-y-3 p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-950">
+          {filteredPets.map((pet, index) => (
+            <ScrollReveal key={pet._id} delay={index * 0.1}>
+              <article className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                <div className="relative h-64 w-full">
+                  <Image
+                    src={pet.image}
+                    alt={pet.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-6 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-2xl font-bold dark:text-white">
                       {pet.name}
                     </h2>
-                    <p className="text-sm text-gray-600">{pet.type}</p>
+                    <span className="bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded text-blue-700 dark:text-blue-300 font-bold">
+                      {pet.fee}
+                    </span>
                   </div>
-                  <span className="rounded-md bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
-                    {pet.fee}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  {pet.age} • {pet.gender} • {pet.location}
-                </p>
-                <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+                  <div className="space-y-2 pt-2">
+                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1.5">
+                        <MdPets className="text-blue-500" size={16} />{" "}
+                        {pet.type}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <MdTransgender className="text-blue-500" size={16} />{" "}
+                        {pet.gender}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <MdCake className="text-blue-500" size={16} /> {pet.age}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1.5">
+                        <MdLocationOn className="text-blue-500" size={16} />{" "}
+                        {pet.location}
+                      </span>
+                    </div>
+                  </div>
                   <Link
                     href={`/all-pets/${pet._id}`}
-                    className="inline-flex flex-1 items-center justify-center rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-blue-300 hover:text-blue-700"
+                    className="flex items-center justify-center gap-2 py-3 bg-blue-200 dark:bg-blue-900/40 rounded-lg font-semibold text-blue-900 dark:text-blue-200 hover:bg-blue-500 hover:text-white transition"
                   >
-                    View Details
+                    <MdRemoveRedEye /> View Details
                   </Link>
                 </div>
-              </div>
-            </article>
+              </article>
+            </ScrollReveal>
           ))}
         </div>
       )}

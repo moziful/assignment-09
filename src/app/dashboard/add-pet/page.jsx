@@ -3,6 +3,22 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import ScrollReveal from "@/components/ScrollReveal";
+import {
+  MdPets,
+  MdCategory,
+  MdOutlinePets,
+  MdCake,
+  MdTransgender,
+  MdImage,
+  MdHealing,
+  MdLocationOn,
+  MdAttachMoney,
+  MdDescription,
+  MdEmail,
+  MdAddCircleOutline,
+} from "react-icons/md";
 
 const initialForm = {
   petName: "",
@@ -22,7 +38,6 @@ export default function AddPetPage() {
   const [form, setForm] = useState(initialForm);
   const { data: session } = authClient.useSession();
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
 
   const handleChange = (event) => {
@@ -48,6 +63,7 @@ export default function AddPetPage() {
         description: form.description,
         ownerEmail: session?.user?.email || "",
       };
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets`,
         {
@@ -56,183 +72,175 @@ export default function AddPetPage() {
           body: JSON.stringify(payload),
         },
       );
+
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Failed to add pet");
       }
-      const data = await res.json();
-      console.log("Pet added:", data);
-    } catch (error) {
-      console.error("Failed to add pet:", error.message);
-    } finally {
+
+      toast.success("Pet added successfully!");
       setForm(initialForm);
-      router.push("/all-pets");
+      router.push("/dashboard/my-listings");
+    } catch (error) {
+      toast.error(error.message || "Something went wrong.");
+    } finally {
       setIsLoading(false);
     }
   };
-  if (isLoading) {
+
+  if (isLoading)
     return (
-      <div className="flex min-h-100 w-full items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-blue-600"></span>
+      <div className="flex min-h-[300px] w-full items-center justify-center dark:text-gray-400">
+        Loading...
       </div>
     );
-  }
-  return (
-    <section className="rounded-xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
-      <h1 className="text-3xl font-bold text-gray-950">Add Pet</h1>
-      <p className="mt-3 text-gray-600">
-        Create a new adoption listing for a pet that needs a home.
-      </p>
 
-      <form
-        className="mt-4 grid justify-between w-180 gap-4 lg:gap-x-18 lg:grid-cols-2"
-        onSubmit={handleSubmit}
-      >
-        <fieldset className="fieldset">
-          <label className="label">Pet Name</label>
-          <input
-            className="input validator"
-            name="petName"
-            value={form.petName}
-            onChange={handleChange}
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Species</label>
-          <input
-            className="input validator"
-            name="species"
-            value={form.species}
-            onChange={handleChange}
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Breed</label>
-          <input
-            name="breed"
-            value={form.breed}
-            onChange={handleChange}
-            className="input validator"
-            placeholder="Breed"
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Age</label>
-          <input
-            name="age"
-            value={form.age}
-            onChange={handleChange}
-            className="input validator"
-            maxLength={9}
-            placeholder="Age"
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Gender</label>
-          <select
-            name="gender"
-            value={form.gender}
-            onChange={handleChange}
-            className="select select-bordered"
-            required
-          >
-            <option value="" disabled>
-              Select gender
-            </option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Image URL</label>
-          <input
-            name="imageUrl"
-            value={form.imageUrl}
-            className="input validator"
-            onChange={handleChange}
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Health Status</label>
-          <input
-            name="healthStatus"
-            value={form.healthStatus}
-            onChange={handleChange}
-            className="input validator"
-            placeholder="Healthy / Needs care"
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Vaccination Status</label>
-          <select
-            name="vaccinationStatus"
-            value={form.vaccinationStatus}
-            onChange={handleChange}
-            className="select select-bordered"
-            required
-          >
-            <option value="" disabled>
-              Select vaccination status
-            </option>
-            <option value="Vaccinated">Vaccinated</option>
-            <option value="Not Vaccinated">Not Vaccinated</option>
-          </select>
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Location</label>
-          <input
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-            className="input validator"
-            placeholder="Location"
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset">
-          <label className="label">Adoption Fee</label>
-          <input
-            name="adoptionFee"
-            className="input validator"
-            value={form.adoptionFee}
-            onChange={handleChange}
-            required
-          />
-        </fieldset>
-        <fieldset className="fieldset w-full lg:col-span-2">
-          <label className="label">Description</label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            className="textarea textarea-bordered min-h-30 w-full"
-            placeholder="Write a short description..."
-          />
-        </fieldset>
-        <fieldset className="fieldset lg:col-span-2">
-          <label className="label">Owner Email</label>
-          <input
-            type="email"
-            className="input validator"
-            value={session?.user?.email || ""}
-            readOnly
-          />
-        </fieldset>
-        <div className="lg:col-span-2">
+  return (
+    <section className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-4 shadow-sm transition-colors">
+      <ScrollReveal>
+        <h1 className="text-3xl font-bold text-gray-950 dark:text-white flex items-center gap-3">
+          <MdAddCircleOutline className="text-blue-600 dark:text-blue-400" />{" "}
+          Add Pet
+        </h1>
+        <p className="mt-3 text-gray-600 dark:text-gray-400">
+          Create a new adoption listing for a pet that needs a home.
+        </p>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <form
+          className="mt-4 grid w-full gap-4 lg:grid-cols-2"
+          onSubmit={handleSubmit}
+        >
+          {/* Input fields updated with dark mode classes */}
+          {[
+            {
+              name: "petName",
+              label: "Pet Name",
+              icon: <MdPets />,
+              type: "text",
+            },
+            {
+              name: "species",
+              label: "Species",
+              icon: <MdCategory />,
+              type: "text",
+            },
+            {
+              name: "breed",
+              label: "Breed",
+              icon: <MdOutlinePets />,
+              type: "text",
+            },
+            { name: "age", label: "Age", icon: <MdCake />, type: "text" },
+            {
+              name: "imageUrl",
+              label: "Image URL",
+              icon: <MdImage />,
+              type: "text",
+            },
+            {
+              name: "healthStatus",
+              label: "Health Status",
+              icon: <MdHealing />,
+              type: "text",
+            },
+            {
+              name: "location",
+              label: "Location",
+              icon: <MdLocationOn />,
+              type: "text",
+            },
+            {
+              name: "adoptionFee",
+              label: "Adoption Fee",
+              icon: <MdAttachMoney />,
+              type: "number",
+            },
+          ].map((field) => (
+            <fieldset key={field.name} className="fieldset w-full">
+              <label className="label flex items-center gap-2 dark:text-gray-300">
+                {field.icon} {field.label}
+              </label>
+              <input
+                name={field.name}
+                value={form[field.name]}
+                onChange={handleChange}
+                className="input input-bordered w-full dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+                placeholder={field.label}
+                required
+              />
+            </fieldset>
+          ))}
+
+          {/* Select fields */}
+          <fieldset className="fieldset w-full">
+            <label className="label flex items-center gap-2 dark:text-gray-300">
+              <MdTransgender size={18} /> Gender
+            </label>
+            <select
+              name="gender"
+              value={form.gender}
+              onChange={handleChange}
+              className="select select-bordered w-full dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+              required
+            >
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </fieldset>
+
+          <fieldset className="fieldset w-full">
+            <label className="label flex items-center gap-2 dark:text-gray-300">
+              <MdOutlinePets size={18} /> Vaccination Status
+            </label>
+            <select
+              name="vaccinationStatus"
+              value={form.vaccinationStatus}
+              onChange={handleChange}
+              className="select select-bordered w-full dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+              required
+            >
+              <option value="">Select status</option>
+              <option value="Vaccinated">Vaccinated</option>
+              <option value="Not Vaccinated">Not Vaccinated</option>
+            </select>
+          </fieldset>
+
+          <fieldset className="fieldset w-full lg:col-span-2">
+            <label className="label flex items-center gap-2 dark:text-gray-300">
+              <MdDescription size={18} /> Description
+            </label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              className="textarea textarea-bordered w-full dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+              placeholder="Write a description..."
+            />
+          </fieldset>
+
+          <fieldset className="fieldset w-full lg:col-span-2">
+            <label className="label flex items-center gap-2 dark:text-gray-300">
+              <MdEmail size={18} /> Owner Email
+            </label>
+            <input
+              type="email"
+              className="input input-bordered w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+              value={session?.user?.email || ""}
+              readOnly
+            />
+          </fieldset>
+
           <button
             type="submit"
-            className="btn border-0 px-16 bg-blue-600 text-white hover:bg-blue-700"
+            className="btn w-full lg:col-span-2 bg-blue-600 text-white hover:bg-blue-700 border-0 flex items-center gap-2"
           >
-            Add Pet
+            <MdAddCircleOutline /> Add Pet
           </button>
-        </div>
-      </form>
+        </form>
+      </ScrollReveal>
     </section>
   );
 }

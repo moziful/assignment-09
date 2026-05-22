@@ -1,2 +1,14 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@theme {
+  /* This enables dark mode via the 'dark' class */
+  --color-background: white;
+  --color-foreground: black;
+
+  /* You can define your dark mode overrides here if needed */
+  /* Or simply use the dark: modifier in your JSX */
+}
+
+/* This is the critical part for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
