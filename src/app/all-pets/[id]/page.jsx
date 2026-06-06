@@ -108,7 +108,8 @@ export default function PetDetailsPage() {
   if (loading)
     return (
       <div className="flex min-h-100 w-full items-center justify-center gap-2 dark:text-gray-400">
-        <MdPets className="animate-pulse" size={24} /> Loading...
+        <MdPets className="animate-pulse" size={24} />{" "}
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>
       </div>
     );
 

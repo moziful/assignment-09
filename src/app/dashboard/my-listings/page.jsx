@@ -241,7 +241,7 @@ export default function MyListingsPage() {
   if (isLoading)
     return (
       <div className="flex min-h-[300px] w-full items-center justify-center dark:text-gray-400">
-        Loading listings...
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>{" "}
       </div>
     );
 

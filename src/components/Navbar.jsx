@@ -50,7 +50,7 @@ export default function Navbar() {
     `rounded-full border px-4 py-2 text-sm font-medium transition flex items-center gap-2 ${
       pathname === href
         ? "border-blue-500 text-blue-700"
-        : "border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-300 dark:text-gray-300"
+        : "border-transparent text-gray-600 hover:border-gray-300 hover:bg-blue-50 dark:text-gray-300 dark:hover:bg-gray-800"
     }`;
 
   const handleSignOut = async () => {
