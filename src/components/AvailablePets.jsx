@@ -88,7 +88,7 @@ const AvailablePets = () => {
                 <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                   <Link
                     href={`/all-pets/${pet._id}`}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 px-5 py-3 text-sm font-semibold text-gray-800 dark:text-gray-200 transition hover:border-blue-300 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400"
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 px-5 py-3 text-sm font-semibold text-gray-800 dark:text-gray-200 transition hover:border-blue-300 dark:hover:border-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-gray-800 dark:hover:text-blue-400"
                   >
                     <MdRemoveRedEye size={18} />
                     View Details
@@ -102,7 +102,7 @@ const AvailablePets = () => {
       <div className="flex justify-center w-full">
         <Link
           href="/all-pets"
-          className="w-full sm:w-fit px-12 mt-10 inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 py-3 text-sm font-semibold bg-blue-600 text-white transition hover:bg-blue-700"
+          className="w-full sm:max-w-sm px-12 mt-10 inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 py-3 text-sm font-semibold bg-blue-600 text-white transition hover:bg-blue-700"
         >
           View All Pets
           <MdArrowForward size={18} />
