@@ -21,12 +21,9 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL,
-    process.env.SERVER_URL,
-    process.env.CLIENT_URL,
-    process.env.NEXT_PUBLIC_API_BASE_URL,
     "http://localhost:3000",
-    "https://petbuddy-adopt.vercel.app"
+    "https://petbuddy-adopt.vercel.app",
+    "https://assignment-09-phi.vercel.app"
   ].filter(Boolean),
   emailAndPassword: {
     enabled: true,
