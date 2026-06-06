@@ -26,6 +26,7 @@ export const auth = betterAuth({
     process.env.CLIENT_URL,
     process.env.NEXT_PUBLIC_API_BASE_URL,
     "http://localhost:3000",
+    "https://petbuddy-adopt.vercel.app"
   ].filter(Boolean),
   emailAndPassword: {
     enabled: true,
