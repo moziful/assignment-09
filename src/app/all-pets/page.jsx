@@ -27,16 +27,49 @@ const sortOptions = [
 const AllPetsPage = () => {
   const [pets, setPets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [species, setSpecies] = useState("all");
   const [sortBy, setSortBy] = useState("None");
+
+  const [allSpecies, setAllSpecies] = useState(["all"]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setSearch(searchInput);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchInput]);
+
+  useEffect(() => {
+    const loadSpecies = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets`);
+        if (res.ok) {
+          const allPets = await res.json();
+          const uniqueSpecies = ["all", ...new Set(allPets.map((pet) => pet.type))];
+          setAllSpecies(uniqueSpecies);
+        }
+      } catch (err) {
+        console.error("Failed to load species", err);
+      }
+    };
+    loadSpecies();
+  }, []);
 
   useEffect(() => {
     const load = async () => {
       setIsLoading(true);
       try {
+        const queryParams = new URLSearchParams();
+        if (search) queryParams.set("search", search);
+        if (species && species !== "all") queryParams.set("species", species);
+        if (sortBy && sortBy !== "None") queryParams.set("sortBy", sortBy);
+
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets?${queryParams.toString()}`
         );
         if (!res.ok) throw new Error("Failed to fetch pets");
         setPets(await res.json());
@@ -44,41 +77,16 @@ const AllPetsPage = () => {
         toast.error("Error loading pets");
       } finally {
         setIsLoading(false);
+        setIsInitialLoading(false);
       }
     };
     load();
-  }, []);
+  }, [search, species, sortBy]);
 
-  const speciesOptions = useMemo(
-    () => ["all", ...new Set(pets.map((pet) => pet.type))],
-    [pets],
-  );
+  const speciesOptions = allSpecies;
+  const filteredPets = pets;
 
-  const filteredPets = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
-    let result = pets.filter((pet) => {
-      const matchesSearch =
-        !normalizedSearch || pet.name.toLowerCase().includes(normalizedSearch);
-      const matchesSpecies = species === "all" || pet.type === species;
-      return matchesSearch && matchesSpecies;
-    });
-
-    if (sortBy === "fee-asc")
-      result.sort(
-        (a, b) =>
-          Number(a.fee.replace(/\D/g, "")) - Number(b.fee.replace(/\D/g, "")),
-      );
-    if (sortBy === "fee-desc")
-      result.sort(
-        (a, b) =>
-          Number(b.fee.replace(/\D/g, "")) - Number(a.fee.replace(/\D/g, "")),
-      );
-    if (sortBy === "name") result.sort((a, b) => a.name.localeCompare(b.name));
-
-    return result;
-  }, [pets, search, species, sortBy]);
-
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <div className="flex min-h-150 w-full items-center justify-center dark:text-gray-400">
         <span className="loading loading-spinner loading-lg text-blue-600"></span>
@@ -106,8 +114,8 @@ const AllPetsPage = () => {
             <input
               className="input w-full border border-gray-200 dark:border-gray-700 pl-10 dark:bg-gray-950 dark:text-white"
               placeholder="Search name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
           <div className="relative flex items-center">
@@ -141,7 +149,7 @@ const AllPetsPage = () => {
           <button
             className="btn btn-outline dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 flex items-center gap-2"
             onClick={() => {
-              setSearch("");
+              setSearchInput("");
               setSpecies("all");
               setSortBy("None");
             }}
@@ -151,14 +159,22 @@ const AllPetsPage = () => {
         </div>
       </ScrollReveal>
 
-      {filteredPets.length === 0 ? (
-        <div className="mt-8 text-center py-16 dark:text-gray-400">
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">
-            No pets found
-          </p>
+      {isLoading && (
+        <div className="flex justify-center mt-6">
+          <span className="loading loading-spinner loading-lg text-blue-600"></span>
         </div>
+      )}
+
+      {filteredPets.length === 0 ? (
+        !isLoading && (
+          <div className="mt-8 text-center py-16 dark:text-gray-400">
+            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              No pets found
+            </p>
+          </div>
+        )
       ) : (
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className={`mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3 transition-opacity duration-200 ${isLoading ? "opacity-40" : "opacity-100"}`}>
           {filteredPets.map((pet, index) => (
             <ScrollReveal key={pet._id} delay={index * 0.1}>
               <article className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">

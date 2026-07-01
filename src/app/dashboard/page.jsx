@@ -32,9 +32,11 @@ export default function DashboardPage() {
         const [petsRes, reqsRes] = await Promise.all([
           fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/pets?email=${session.user.email}`,
+            { credentials: "include" }
           ),
           fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests?email=${session.user.email}`,
+            { credentials: "include" }
           ),
         ]);
 

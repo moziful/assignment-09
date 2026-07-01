@@ -63,6 +63,13 @@ export default function Navbar() {
     }
   };
 
+  const visibleNavItems = navItems.filter((item) => {
+    if (item.href === "/dashboard" || item.href === "/dashboard/my-requests" || item.href === "/dashboard/add-pet") {
+      return isLoggedIn;
+    }
+    return true;
+  });
+
   return (
     <div className="navbar sticky top-0 z-50 border-b border-gray-200/80 bg-white dark:bg-gray-900 dark:border-gray-800 backdrop-blur">
       {" "}
@@ -81,7 +88,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-2 lg:flex">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -167,7 +174,7 @@ export default function Navbar() {
             className={`dropdown-content mt-3 w-72 rounded-xl border border-gray-200 bg-white dark:bg-gray-800 dark:text-white p-3 shadow-xl ${mobileMenuOpen ? "block" : "hidden"}`}
           >
             <div className="flex flex-col gap-1">
-              {navItems.map((item) => (
+              {visibleNavItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AuthSync from "@/components/AuthSync";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "next-themes";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthSync />
           <Navbar />
           <main className="flex flex-1 flex-col">
             {children}

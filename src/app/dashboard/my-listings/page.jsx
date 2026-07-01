@@ -66,6 +66,7 @@ export default function MyListingsPage() {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/pets?email=${session.user.email}`,
+          { credentials: "include" }
         );
         const data = await res.json();
         setListings(data);
@@ -94,7 +95,7 @@ export default function MyListingsPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/all-pets/${modal.pet._id}`,
-        { method: "DELETE" },
+        { method: "DELETE", credentials: "include" },
       );
       const data = await res.json();
       if (data.success) {
@@ -154,6 +155,7 @@ export default function MyListingsPage() {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
+          credentials: "include",
         },
       );
       if (res.ok) {
@@ -179,6 +181,7 @@ export default function MyListingsPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests/pet/${pet._id}`,
+        { credentials: "include" }
       );
       const data = await res.json();
       setPetRequests(data);
@@ -198,6 +201,7 @@ export default function MyListingsPage() {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: newStatus, petId: modal.pet._id }),
+          credentials: "include",
         },
       );
       const data = await res.json();

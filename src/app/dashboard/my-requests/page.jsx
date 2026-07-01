@@ -29,6 +29,7 @@ export default function MyRequestsPage() {
         if (!session?.user?.email) return;
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests?email=${session.user.email}`,
+          { credentials: "include" }
         );
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to load requests");
@@ -52,7 +53,7 @@ export default function MyRequestsPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/adoption-requests/${id}`,
-        { method: "DELETE" },
+        { method: "DELETE", credentials: "include" },
       );
       if (!res.ok) throw new Error("Failed to cancel request");
       setRows((current) => current.filter((item) => item._id !== id));
@@ -121,10 +122,18 @@ export default function MyRequestsPage() {
                     </span>
                     <span>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-fit ${item.status === "approved" ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400" : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"}`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-fit ${
+                          item.status === "approved"
+                            ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+                            : item.status === "rejected"
+                              ? "bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400"
+                              : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
+                        }`}
                       >
                         {item.status === "approved" ? (
                           <MdCheckCircle />
+                        ) : item.status === "rejected" ? (
+                          <MdCancel />
                         ) : (
                           <MdInfoOutline />
                         )}{" "}
@@ -155,7 +164,13 @@ export default function MyRequestsPage() {
                         <MdPets className="text-blue-500" /> {item.petName}
                       </span>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "approved" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          item.status === "approved"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : item.status === "rejected"
+                              ? "bg-rose-100 text-rose-700"
+                              : "bg-amber-100 text-amber-700"
+                        }`}
                       >
                         {item.status}
                       </span>
@@ -168,6 +183,22 @@ export default function MyRequestsPage() {
                       <p className="flex items-center gap-2">
                         <MdEvent /> Pickup: {item.pickupDate}
                       </p>
+                    </div>
+                    <div className="flex gap-2 justify-end mt-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+                      <Link
+                        href={`/all-pets/${item.petId}`}
+                        className="flex items-center gap-1 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-xs font-semibold"
+                      >
+                        <MdRemoveRedEye size={14} /> View
+                      </Link>
+                      {item.status !== "approved" && (
+                        <button
+                          onClick={() => setRequestToCancel(item._id)}
+                          className="flex items-center gap-1 px-3 py-1.5 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition text-xs font-semibold"
+                        >
+                          <MdCancel size={14} /> Cancel
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
